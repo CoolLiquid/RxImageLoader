@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import com.jakewharton.disklrucache.DiskLruCache;
 import com.weinpxpp.tgnet.rximageloader.Bean.ImageBean;
 import com.weinpxpp.tgnet.rximageloader.Utils.DiskCacheUtils;
+import com.weinpxpp.tgnet.rximageloader.Utils.LogUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -55,6 +56,7 @@ public class DiskCacheObservable extends CacheObservable {
 
     @Override
     public ImageBean getDataFromCache(String url) {
+        LogUtils.log("DiskCacheObservable--getDataFromCache");
         Bitmap bitmap = getDataFromDiskLruCache(url);
         return new ImageBean(bitmap, url);
     }
@@ -62,6 +64,7 @@ public class DiskCacheObservable extends CacheObservable {
 
     @Override
     public void putDataToCahce(final ImageBean imagebean) {
+        LogUtils.log("DiskCacheObservable--putDataToCahce");
         Observable.concat(new Observable<ObservableSource<?>>() {
             @Override
             protected void subscribeActual(Observer<? super ObservableSource<?>> observer) {

@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.weinpxpp.tgnet.rximageloader.Bean.ImageBean;
+import com.weinpxpp.tgnet.rximageloader.Utils.LogUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +20,7 @@ import java.net.URLConnection;
 public class NetworkCacheObservable extends CacheObservable {
     @Override
     public ImageBean getDataFromCache(String url) {
-        Log.e("getDataFromCache", "getDataFromNetworkCache");
+        LogUtils.log("NetworkCacheObservable--getDataFromCache");
         Bitmap bitmap = downloadImage(url);
         return new ImageBean(bitmap, url);
     }
@@ -27,7 +28,7 @@ public class NetworkCacheObservable extends CacheObservable {
 
     @Override
     public void putDataToCahce(ImageBean imagebean) {
-
+        LogUtils.log("NetworkCacheObservable--putDataToCahce");
     }
 
 

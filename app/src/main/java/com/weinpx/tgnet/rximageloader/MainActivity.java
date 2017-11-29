@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ImageView imageView = (ImageView) findViewById(R.id.image);
         RxImageLoader.with(this)
-                .load("http://img3.imgtn.bdimg.com/it/u=1524823793,944673388&fm=11&gp=0.jpg")
+                .load("http://reactivex.io/documentation/operators/images/concat.png")
                 .into(imageView);
 
     }

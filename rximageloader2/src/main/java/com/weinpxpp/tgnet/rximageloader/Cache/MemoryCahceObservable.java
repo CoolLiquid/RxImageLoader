@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
 
 import com.weinpxpp.tgnet.rximageloader.Bean.ImageBean;
+import com.weinpxpp.tgnet.rximageloader.Utils.LogUtils;
 
 /**
  * Created by tgnet on 2017/11/29.
@@ -21,12 +22,14 @@ public class MemoryCahceObservable extends CacheObservable {
 
     @Override
     public ImageBean getDataFromCache(String url) {
+        LogUtils.log("MemoryCahceObservable--getDataFromCache");
         Bitmap bitmap = mLruCache.get(url);
         return new ImageBean(bitmap, url);
     }
 
     @Override
     public void putDataToCahce(ImageBean imagebean) {
+        LogUtils.log("MemoryCahceObservable--putDataToCahce");
         mLruCache.put(imagebean.getUrl(), imagebean.getBitmap());
     }
 }
