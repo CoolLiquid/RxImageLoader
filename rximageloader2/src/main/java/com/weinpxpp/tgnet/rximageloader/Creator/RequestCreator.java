@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 import com.weinpxpp.tgnet.rximageloader.Bean.ImageBean;
+import com.weinpxpp.tgnet.rximageloader.Cache.CacheObservable;
 import com.weinpxpp.tgnet.rximageloader.Cache.DiskCacheObservable;
 import com.weinpxpp.tgnet.rximageloader.Cache.MemoryCahceObservable;
 import com.weinpxpp.tgnet.rximageloader.Cache.NetworkCacheObservable;
@@ -19,9 +20,9 @@ import io.reactivex.functions.Predicate;
 
 public class RequestCreator {
 
-    public MemoryCahceObservable memoryCahceObservable;
-    public NetworkCacheObservable networkCacheObservable;
-    public DiskCacheObservable diskCacheObservable;
+    public CacheObservable memoryCahceObservable;
+    public CacheObservable networkCacheObservable;
+    public CacheObservable diskCacheObservable;
 
     public RequestCreator(Context context) {
         memoryCahceObservable = new MemoryCahceObservable();
@@ -74,6 +75,16 @@ public class RequestCreator {
                         memoryCahceObservable.putDataToCahce(imageBean);
                     }
                 });
+    }
+
+    public Observable<ImageBean> getImage(String url) {
+        Observable<ImageBean> observable = Observable.concat(
+                getImageFromMemory(url),
+                getImageFromDisk(url),
+                getImageFromNetwork(url)
+        ).first(new ImageBean(null, url))
+                .toObservable();
+        return observable;
     }
 
 

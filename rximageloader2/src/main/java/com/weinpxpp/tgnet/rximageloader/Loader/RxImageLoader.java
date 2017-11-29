@@ -6,7 +6,6 @@ import android.widget.ImageView;
 import com.weinpxpp.tgnet.rximageloader.Bean.ImageBean;
 import com.weinpxpp.tgnet.rximageloader.Creator.RequestCreator;
 
-import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
@@ -54,12 +53,8 @@ public class RxImageLoader {
     }
 
     public void into(final ImageView imageView) {
-        Observable.concat(
-                requestCreator.getImageFromMemory(url),
-                requestCreator.getImageFromDisk(url),
-                requestCreator.getImageFromNetwork(url)
-        ).first(new ImageBean(null, url))
-                .toObservable()
+        requestCreator
+                .getImage(url)
                 .subscribe(new Observer<ImageBean>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -84,10 +79,6 @@ public class RxImageLoader {
                     }
                 });
     }
-
-
-
-
 
 
 }
