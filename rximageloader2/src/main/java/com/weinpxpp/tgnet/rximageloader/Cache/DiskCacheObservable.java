@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.example.repositories.CacheStoreProvider;
+import com.example.repositories.DiskLruCacheProvicder;
 import com.jakewharton.disklrucache.DiskLruCache;
 import com.weinpxpp.tgnet.rximageloader.Bean.ImageBean;
 import com.weinpxpp.tgnet.rximageloader.Utils.DiskCacheUtils;
@@ -33,6 +35,7 @@ public class DiskCacheObservable extends CacheObservable {
 
     private Context mContext;
     private DiskLruCache mDiskLruCache;
+    CacheStoreProvider mCacheStoreProvider;
     private final int maxSize = 10 * 1024 * 1024;
 
     public DiskCacheObservable(Context mContext) {
@@ -41,7 +44,8 @@ public class DiskCacheObservable extends CacheObservable {
     }
 
     private void initDiskLruCache() {
-        File cacheDir = DiskCacheUtils.getDiskCacheDir(mContext, "our_cache");
+        mCacheStoreProvider = new DiskLruCacheProvicder("our_cache", maxSize);
+        /*File cacheDir = DiskCacheUtils.getDiskCacheDir(mContext, "our_cache");
         if (!cacheDir.exists()) {
             cacheDir.mkdirs();
         }
@@ -51,7 +55,7 @@ public class DiskCacheObservable extends CacheObservable {
             mDiskLruCache = DiskLruCache.open(cacheDir, versionCode, 1, maxSize);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     @Override
@@ -75,37 +79,22 @@ public class DiskCacheObservable extends CacheObservable {
 
     private Bitmap getDataFromDiskLruCache(String url) {
         Bitmap bitmap = null;
-        FileDescriptor fileDescriptor = null;
-        FileInputStream fileInputStream = null;
-        try {
-            final String key = DiskCacheUtils.getMD5String(url);
-            DiskLruCache.Snapshot snapshot = mDiskLruCache.get(key);
-            if (snapshot != null) {
-                fileInputStream = (FileInputStream) snapshot.getInputStream(0);
-                fileDescriptor = fileInputStream.getFD();
-            }
-            if (fileDescriptor != null) {
-                bitmap = BitmapFactory.decodeStream(fileInputStream);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (fileInputStream != null) {
-                try {
-                    fileInputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        final String key = DiskCacheUtils.getMD5String(url);
+        bitmap = mCacheStoreProvider.getCacheStore().getBitmap(key);
         return bitmap;
     }
 
 
     private void putDataToDiskLruCache(ImageBean imageBean) {
-        try {
+//        try {
             String key = DiskCacheUtils.getMD5String(imageBean.getUrl());
-            DiskLruCache.Editor editor = mDiskLruCache.edit(key);
+            if (imageBean.getBitmap() != null) {
+                mCacheStoreProvider.getCacheStore().saveBitmap(key, imageBean.getBitmap());
+            }else{
+                //下载图片
+
+            }
+            /*DiskLruCache.Editor editor = mDiskLruCache.edit(key);
             if (editor != null) {
                 OutputStream out = editor.newOutputStream(0);
                 Bitmap bitmap = imageBean.getBitmap();
@@ -125,7 +114,7 @@ public class DiskCacheObservable extends CacheObservable {
             mDiskLruCache.flush();
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     private boolean downLoadUrlToStream(String url, OutputStream outputStream) {

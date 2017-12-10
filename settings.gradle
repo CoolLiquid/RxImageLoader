@@ -1,1 +1,1 @@
-include ':app', ':rximageloader2'
+include ':app', ':rximageloader2', ':baselib'
